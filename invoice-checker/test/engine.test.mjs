@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluate, parseInvoice, lastThreeHint, summarize, netAmount, claimWindow, latestExpectedPeriod, previousPeriod, periodLabel, isExpired } from '../src/engine.js';
+import { evaluate, evaluateRecord, parseInvoice, lastThreeHint, summarize, netAmount, claimWindow, latestExpectedPeriod, previousPeriod, periodLabel, isExpired } from '../src/engine.js';
 import { parseDrawHtml, validateDraw } from '../src/parse.js';
 
 const D = { special: '38548029', grand: '10138845', first: ['24121106', '28589937', '83663333'], additionalSixth: [] };
@@ -59,6 +59,27 @@ test('領獎期間與期別推算（已對照官方）', () => {
   assert.equal(previousPeriod('11501'), '11411');
   assert.equal(periodLabel('11507'), '115年07-08月');
   assert.equal(isExpired({ claimEnd: '2026-11-05' }, '2026-11-25'), true);
+});
+
+test('兩輪流程：末3碼初篩與保底金額', () => {
+  const recs = [{ last3: '106' }, { last3: '029' }, { last3: '555' }, { last3: '845', number: '10138845' }];
+  assert.equal(evaluateRecord(recs[0], D).state, 'pending');
+  assert.equal(evaluateRecord(recs[0], D).min, 200);
+  assert.equal(evaluateRecord(recs[1], D).hint, 'check');
+  assert.equal(evaluateRecord(recs[1], D).min, 0);
+  assert.equal(evaluateRecord(recs[2], D).state, 'miss');
+  const s = summarize(recs, D);
+  assert.equal(s.count, 4); assert.equal(s.pending, 2); assert.equal(s.pendingMin, 200);
+  assert.equal(s.gross, 2_000_000); assert.equal(s.minGross, 2_000_200);
+});
+test('第二輪確認與人工確認', () => {
+  assert.equal(evaluateRecord({ last3: '106', number: '99999106' }, D).hit.label, '六獎');
+  assert.equal(evaluateRecord({ last3: '106', number: '24121106' }, D).hit.label, '頭獎');
+  assert.equal(evaluateRecord({ last3: '029', number: '99999029' }, D).hit, null); // 僅特別獎末3碼相同
+  assert.equal(evaluateRecord({ last3: '106', manual: 'sixth' }, D).hit.amount, 200);
+  assert.equal(evaluateRecord({ last3: '029', manual: 'none' }, D).state, 'confirmed');
+  const s = summarize([{ last3: '106', number: '24121106' }, { last3: '106' }], D);
+  assert.equal(s.gross, 200000); assert.equal(s.pendingMin, 200); assert.equal(s.minGross, 200200);
 });
 
 // 以官方號碼單的文字結構建立的測試資料（非即時抓取的原始 HTML，首次部署請實測）
