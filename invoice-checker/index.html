@@ -42,6 +42,13 @@ li button{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 .
 .opts{display:flex;flex-direction:column;gap:.2rem;margin-top:.6rem;font-size:.9rem}
 .opts label{display:flex;gap:.5rem;align-items:center}
 .sub{color:var(--muted);font-size:.9rem;margin-top:.3rem}
+.modes{display:flex;gap:.4rem;flex-wrap:wrap;margin:.2rem 0 .6rem}
+.mini{background:none;border:1px solid var(--rule);padding:.05rem .5rem;font-size:.8rem;cursor:pointer;color:var(--ink)}
+li{flex-wrap:wrap;align-items:center}
+li .res{flex:1;text-align:right}
+li.pending .res{color:var(--ink);font-weight:600}
+li.pending{border-left:3px solid var(--stamp);padding-left:.5rem}
+.tools{display:flex;gap:.5rem;align-items:center;margin-top:.5rem}
 footer{margin-top:1rem;font-size:.8rem;color:var(--muted)}
 footer a{color:inherit}
 </style>
@@ -58,17 +65,19 @@ footer a{color:inherit}
     <p class="sub" id="claim"></p>
     <hr class="rule">
 
-    <h2>輸入發票號碼</h2>
+    <div class="modes" id="modes" role="group" aria-label="對獎輪次"></div>
+    <h2 id="invLabel">輸入發票號碼（先輸入末3碼）</h2>
     <div class="row">
-      <input type="text" id="inv" inputmode="numeric" autocomplete="off" placeholder="8 碼，可含字軌" aria-label="發票號碼" aria-describedby="hint">
-      <button class="add" id="add" disabled>加入對獎</button>
+      <input type="text" id="inv" inputmode="numeric" autocomplete="off" aria-label="發票號碼" aria-describedby="hint">
+      <button class="add" id="add" type="button">加入兌獎</button>
     </div>
     <p class="hint" id="hint" aria-live="polite"></p>
+    <div class="tools"><button class="mini" id="undo" type="button" disabled>復原上一步</button><span class="sub" id="stats"></span></div>
 
-    <h2>本期已對獎</h2>
+    <h2 id="listTitle">末3碼有中的清單</h2>
     <ul id="ledger"></ul>
-    <div class="total"><div><small>中獎金額合計</small></div><strong id="gross">0</strong></div>
-    <div class="sub" id="stats"></div>
+    <div class="total"><div><small id="grossLabel">中獎金額合計</small></div><strong id="gross">0</strong></div>
+    <div class="sub" id="breakdown"></div>
     <div class="opts">
       <label><input type="checkbox" id="optNet"> 顯示稅後預估</label>
       <label id="waiveRow" hidden><input type="checkbox" id="optWaive"> 已設定領獎帳戶（免印花稅）</label>
