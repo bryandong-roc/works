@@ -46,15 +46,34 @@ export function netAmount(amount, { waiveStamp = false } = {}) {
   return Math.round(amount - tax - stamp);
 }
 
-/** 當期累計：每次都由「號碼＋期別」重算，不依賴儲存時的結果。 */
+/**
+ * 單筆紀錄狀態（紀錄為 {last3, number?, serial?, manual?}）：
+ * - 有完整 8 碼：confirmed，依規則判定
+ * - 僅末 3 碼：符合頭獎末3碼 → pending（至少六獎 200）；僅同特別獎/特獎末3碼 → pending（須對 8 碼）；否則 miss
+ * - manual：人工確認（'sixth' 僅六獎、'none' 未中）
+ */
+export function evaluateRecord(rec, draw) {
+  if (rec.number) { const hit = evaluate(rec.number, draw); return { state: 'confirmed', hit, min: hit?.amount ?? 0 }; }
+  if (rec.manual === 'sixth') return { state: 'confirmed', hit: { label: '六獎', amount: 200, manual: true }, min: 200 };
+  if (rec.manual === 'none') return { state: 'confirmed', hit: null, min: 0 };
+  const hint = lastThreeHint(rec.last3, draw);
+  if (hint === 'sixth') return { state: 'pending', hint, hit: null, min: 200 };
+  if (hint === 'check') return { state: 'pending', hint, hit: null, min: 0 };
+  return { state: 'miss', hint, hit: null, min: 0 };
+}
+
+/** 當期累計：每次由紀錄重算。gross＝已確認金額；minGross＝已確認＋待確認保底（至少金額）。 */
 export function summarize(records, draw, opts = {}) {
-  let gross = 0, net = 0, wins = 0;
-  const rows = records.map(r => {
-    const hit = evaluate(r.number, draw);
-    if (hit) { wins++; gross += hit.amount; net += netAmount(hit.amount, opts); }
-    return { ...r, hit };
-  });
-  return { rows, count: rows.length, wins, gross, net };
+  const s = { rows: [], count: records.length, wins: 0, pending: 0, gross: 0, pendingMin: 0, minGross: 0, net: 0 };
+  for (const r of records) {
+    const e = evaluateRecord(r, draw);
+    s.rows.push({ ...r, ...e });
+    if (e.state === 'pending') { s.pending++; s.pendingMin += e.min; }
+    else if (e.hit) { s.wins++; s.gross += e.hit.amount; }
+    s.net += netAmount(e.min, opts);
+  }
+  s.minGross = s.gross + s.pendingMin;
+  return s;
 }
 
 // ---- 期別工具：期別代碼如 11507＝民國115年7-8月 ----
