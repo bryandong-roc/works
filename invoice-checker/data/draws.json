@@ -1,16 +1,41 @@
 {
   "schemaVersion": 1,
-  "generatedAt": null,
+  "generatedAt": "2026-11-27T04:59:58.908Z",
   "draws": [
+    {
+      "periodCode": "11509",
+      "claimStart": "2026-12-06",
+      "claimEnd": "2027-03-05",
+      "special": "97606522",
+      "grand": "76160702",
+      "first": [
+        "02096005",
+        "28745017",
+        "76740352"
+      ],
+      "additionalSixth": [],
+      "source": {
+        "kind": "official-page",
+        "url": "https://www.etax.nat.gov.tw/etw-main/ETW183W2_11509/",
+        "fetchedAt": "2026-11-27T04:59:56.204Z"
+      }
+    },
     {
       "periodCode": "11507",
       "claimStart": "2026-10-06",
       "claimEnd": "2027-01-05",
       "special": "89996565",
       "grand": "91098182",
-      "first": ["54348835", "44991397", "06595111"],
+      "first": [
+        "54348835",
+        "44991397",
+        "06595111"
+      ],
       "additionalSixth": [],
-      "source": { "kind": "seed-manual", "note": "依多家媒體報導人工建立，尚未由排程對照官方頁面驗證" }
+      "source": {
+        "kind": "seed-manual",
+        "note": "依多家媒體報導人工建立，尚未由排程對照官方頁面驗證"
+      }
     },
     {
       "periodCode": "11505",
@@ -18,9 +43,17 @@
       "claimEnd": "2026-11-05",
       "special": "38548029",
       "grand": "10138845",
-      "first": ["24121106", "28589937", "83663333"],
+      "first": [
+        "24121106",
+        "28589937",
+        "83663333"
+      ],
       "additionalSixth": [],
-      "source": { "kind": "seed-manual", "url": "https://www.etax.nat.gov.tw/etw-main/ETW183W2_11505/", "note": "對照官方頁面人工建立" }
+      "source": {
+        "kind": "seed-manual",
+        "url": "https://www.etax.nat.gov.tw/etw-main/ETW183W2_11505/",
+        "note": "對照官方頁面人工建立"
+      }
     }
   ]
 }
