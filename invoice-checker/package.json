@@ -1,0 +1,13 @@
+{
+  "name": "invoice-checker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "統一發票對獎工具：自動取得財政部號碼、累計當期中獎金額",
+  "scripts": {
+    "test": "node --test",
+    "update": "node scripts/fetch-draws.mjs",
+    "serve": "python3 -m http.server 8080"
+  },
+  "engines": { "node": ">=18" }
+}

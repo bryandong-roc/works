@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>統一發票對獎</title>
+<style>
+:root{--page:#e6e9e4;--slip:#fafaf6;--ink:#1d2125;--muted:#5d656b;--rule:#c4c9c1;--stamp:#b3261e;--ok:#2d5a3d;
+ font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-variant-numeric:tabular-nums}
+@media (prefers-color-scheme:dark){:root{--page:#16191b;--slip:#202427;--ink:#eceee9;--muted:#9aa2a8;--rule:#3a4044;--stamp:#ff8a80;--ok:#8fd1a6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);line-height:1.6}
+main{max-width:30rem;margin:0 auto;padding:1.25rem 1rem 3rem}
+.slip{background:var(--slip);padding:1.25rem 1.25rem 1.5rem;border-top:.35rem solid var(--ink)}
+h1{font-size:1.15rem;margin:0 0 .75rem;letter-spacing:.04em}
+h2{font-size:.95rem;margin:1.4rem 0 .4rem;color:var(--muted);font-weight:600}
+.rule{border:0;border-top:1px dashed var(--rule);margin:1rem 0}
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap}
+button,input{font:inherit;color:inherit}
+.tab{background:none;border:1px solid var(--rule);padding:.3rem .7rem;cursor:pointer}
+.tab[aria-pressed=true]{background:var(--ink);color:var(--slip);border-color:var(--ink)}
+:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+.note{margin:.75rem 0 0;padding:.5rem .7rem;border-left:3px solid var(--rule);font-size:.9rem}
+.note.warn{border-color:var(--stamp)}
+.prize{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.2rem 0}
+.prize b{font-size:1.25rem;letter-spacing:.08em}
+.prize span{color:var(--muted);font-size:.85rem}
+.row{display:flex;gap:.5rem;margin-top:.4rem}
+input[type=text]{flex:1;min-width:0;padding:.6rem .7rem;border:1px solid var(--ink);background:var(--slip);font-size:1.25rem;letter-spacing:.12em}
+.add{padding:.6rem 1rem;background:var(--ink);color:var(--slip);border:0;cursor:pointer}
+.add:disabled{opacity:.4;cursor:not-allowed}
+.hint{min-height:1.5rem;margin:.4rem 0 0;font-size:.9rem;color:var(--muted)}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:.75rem;padding:.35rem 0;border-bottom:1px dotted var(--rule)}
+li .no{letter-spacing:.08em}
+li.win .res{color:var(--stamp);font-weight:700}
+li button{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 .3rem}
+.empty{color:var(--muted);font-size:.9rem;padding:.5rem 0}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin-top:.9rem}
+.total strong{font-size:2.4rem;line-height:1;color:var(--stamp);letter-spacing:.02em}
+.total small{color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:.2rem;margin-top:.6rem;font-size:.9rem}
+.opts label{display:flex;gap:.5rem;align-items:center}
+.sub{color:var(--muted);font-size:.9rem;margin-top:.3rem}
+footer{margin-top:1rem;font-size:.8rem;color:var(--muted)}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+  <div class="slip">
+    <h1>統一發票對獎</h1>
+    <div class="tabs" id="tabs" role="group" aria-label="選擇期別"></div>
+    <div id="notes"></div>
+
+    <h2>本期號碼</h2>
+    <div id="numbers"></div>
+    <p class="sub" id="claim"></p>
+    <hr class="rule">
+
+    <h2>輸入發票號碼</h2>
+    <div class="row">
+      <input type="text" id="inv" inputmode="numeric" autocomplete="off" placeholder="8 碼，可含字軌" aria-label="發票號碼" aria-describedby="hint">
+      <button class="add" id="add" disabled>加入對獎</button>
+    </div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+
+    <h2>本期已對獎</h2>
+    <ul id="ledger"></ul>
+    <div class="total"><div><small>中獎金額合計</small></div><strong id="gross">0</strong></div>
+    <div class="sub" id="stats"></div>
+    <div class="opts">
+      <label><input type="checkbox" id="optNet"> 顯示稅後預估</label>
+      <label id="waiveRow" hidden><input type="checkbox" id="optWaive"> 已設定領獎帳戶（免印花稅）</label>
+    </div>
+    <div class="sub" id="net" hidden></div>
+    <hr class="rule">
+    <button class="tab" id="clear">清除本期紀錄</button>
+  </div>
+  <footer id="foot"></footer>
+</main>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
